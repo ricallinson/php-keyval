@@ -1,0 +1,25 @@
+{
+    "name": "php-keyval",
+    "description": "File based key value store using APC for in memory cache.",
+    "version": "0.0.1",
+    "author": {
+        "name": "Ric Allinson",
+        "email": "npm@ricallinson.com"
+    },
+    "engines": {
+        "php": ">= 5.4.0"
+    },
+    "dependencies" : {
+    },
+    "devDependencies" : {
+        "php-tester": "git://github.com/ricallinson/php-tester.git#master"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:ricallinson/php-keyval.git"
+    },
+    "scripts": {
+        "test": "./test/run"
+    },
+    "license": "MIT"
+}
