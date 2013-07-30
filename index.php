@@ -86,6 +86,10 @@ class KeyVal {
             apc_delete($fullkey);
         }
 
+        if (!is_file($fullkey)) {
+            return true;
+        }
+
         return unlink($fullkey);
     }
 
