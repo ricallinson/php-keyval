@@ -3,14 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 
-/*
-    Create a MockModule to load our module into for testing.
-*/
-
-class MockModule {
-    public $exports = array();
-}
-$module = new MockModule();
+$module = new stdClass();
 
 /*
     Now we "require()" the file to test.
