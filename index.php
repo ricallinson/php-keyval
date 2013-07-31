@@ -12,6 +12,10 @@ class KeyVal {
         $this->prefix = $prefix;
         $this->ttl = $ttl;
 
+        if (substr($this->prefix, -1) !== DIRECTORY_SEPARATOR) {
+            $this->prefix = $this->prefix . DIRECTORY_SEPARATOR;
+        }
+
         if (!function_exists("apc_store")) {
             $this->ttl = 0;
         }
