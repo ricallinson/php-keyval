@@ -16,7 +16,7 @@ class KeyVal {
             $this->prefix = $this->prefix . DIRECTORY_SEPARATOR;
         }
 
-        if (!function_exists("apc_store")) {
+        if ($ttl === 0 || !function_exists("apc_store")) {
             $this->ttl = 0;
         }
     }
@@ -74,17 +74,25 @@ class KeyVal {
         return unlink($fullkey);
     }
 
-    public function getKeys($from=0, $to=null) {
+    public function getKeys($from=0, $length=null) {
 
         $keys = array();
+        $cur = 0;
         $dh  = opendir($this->prefix);
 
         while (false !== ($filename = readdir($dh))) {
+
             if (is_file($this->prefix . $filename)) {
-                $keys[] = $filename;
-            }
-            if ($to && --$to < $from) {
-                return $keys;
+
+                if ($cur >= $from) {
+                    array_push($keys, $filename);
+                }
+
+                if ($length !== null && $cur === $from + $length - 1) { 
+                    return $keys;
+                }
+
+                $cur++;
             }
         }
 
