@@ -5,20 +5,13 @@ class KeyVal {
 
     private $prefix = "";
 
-    // private $ttl = 0;
-
     public function __construct($prefix) {
 
         $this->prefix = $prefix;
-        // $this->ttl = $ttl;
 
         if (substr($this->prefix, -1) !== DIRECTORY_SEPARATOR) {
             $this->prefix = $this->prefix . DIRECTORY_SEPARATOR;
         }
-
-        // if ($ttl === 0 || !function_exists("apc_store")) {
-        //     $this->ttl = 0;
-        // }
     }
 
     public function put($key, $val) {
@@ -27,10 +20,6 @@ class KeyVal {
 
         $bytes = file_put_contents($fullkey, json_encode($val));
 
-        // if ($bytes > 0 && $this->ttl) {
-        //     apc_store($fullkey, $val, $this->ttl);
-        // }
-
         return $bytes > 0 ? true : false;
     }
 
@@ -38,23 +27,11 @@ class KeyVal {
 
         $fullkey = $this->prefix . $key;
 
-        // if ($this->ttl) {
-        //     $success;
-        //     $val = apc_fetch($fullkey, $success);
-        //     if ($success) {
-        //         return $val;
-        //     }
-        // }
-
         if (!is_file($fullkey)) {
             return null;
         }
 
         $val = json_decode(file_get_contents($fullkey), true);
-
-        // if ($this->ttl) {
-        //     $this->put($key, $val);
-        // }
 
         return $val;
     }
@@ -62,10 +39,6 @@ class KeyVal {
     public function delete($key) {
 
         $fullkey = $this->prefix . $key;
-
-        // if ($this->ttl) {
-        //     apc_delete($fullkey);
-        // }
 
         if (!is_file($fullkey)) {
             return true;
