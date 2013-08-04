@@ -5,20 +5,20 @@ class KeyVal {
 
     private $prefix = "";
 
-    private $ttl = 0;
+    // private $ttl = 0;
 
-    public function __construct($prefix, $ttl=0) {
+    public function __construct($prefix) {
 
         $this->prefix = $prefix;
-        $this->ttl = $ttl;
+        // $this->ttl = $ttl;
 
         if (substr($this->prefix, -1) !== DIRECTORY_SEPARATOR) {
             $this->prefix = $this->prefix . DIRECTORY_SEPARATOR;
         }
 
-        if ($ttl === 0 || !function_exists("apc_store")) {
-            $this->ttl = 0;
-        }
+        // if ($ttl === 0 || !function_exists("apc_store")) {
+        //     $this->ttl = 0;
+        // }
     }
 
     public function put($key, $val) {
@@ -27,9 +27,9 @@ class KeyVal {
 
         $bytes = file_put_contents($fullkey, json_encode($val));
 
-        if ($bytes > 0 && $this->ttl) {
-            apc_store($fullkey, $val, $this->ttl);
-        }
+        // if ($bytes > 0 && $this->ttl) {
+        //     apc_store($fullkey, $val, $this->ttl);
+        // }
 
         return $bytes > 0 ? true : false;
     }
@@ -38,13 +38,13 @@ class KeyVal {
 
         $fullkey = $this->prefix . $key;
 
-        if ($this->ttl) {
-            $success;
-            $val = apc_fetch($fullkey, $success);
-            if ($success) {
-                return $val;
-            }
-        }
+        // if ($this->ttl) {
+        //     $success;
+        //     $val = apc_fetch($fullkey, $success);
+        //     if ($success) {
+        //         return $val;
+        //     }
+        // }
 
         if (!is_file($fullkey)) {
             return null;
@@ -52,9 +52,9 @@ class KeyVal {
 
         $val = json_decode(file_get_contents($fullkey), true);
 
-        if ($this->ttl) {
-            $this->put($key, $val);
-        }
+        // if ($this->ttl) {
+        //     $this->put($key, $val);
+        // }
 
         return $val;
     }
@@ -63,9 +63,9 @@ class KeyVal {
 
         $fullkey = $this->prefix . $key;
 
-        if ($this->ttl) {
-            apc_delete($fullkey);
-        }
+        // if ($this->ttl) {
+        //     apc_delete($fullkey);
+        // }
 
         if (!is_file($fullkey)) {
             return true;
@@ -78,7 +78,12 @@ class KeyVal {
 
         $keys = array();
         $cur = 0;
-        $dh  = opendir($this->prefix);
+        $dh  = @opendir($this->prefix); /* using @ to suppresses error message */
+
+        if (!is_resource($dh)) {
+            error_log("php-keyval: Could not read diretory: " . $this->prefix);
+            return $keys;
+        }
 
         while (false !== ($filename = readdir($dh))) {
 

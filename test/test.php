@@ -4,40 +4,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 
 /*
-    Fake APC
-*/
-
-if (!function_exists("apc_store")) {
-
-    $apc = array();
-
-    function apc_store($fullkey, $val, $ttl) {
-        global $apc;
-        $apc[$fullkey] = $val;
-    }
-
-    function apc_fetch($fullkey, &$success) {
-        global $apc;
-        if (isset($apc[$fullkey])) {
-            $success = true;
-            return $apc[$fullkey];
-        }
-        $success = false;
-        return null;
-    }
-
-    function apc_delete($fullkey) {
-        global $apc;
-        unset($apc[$fullkey]);
-    }
-
-    function apc_clear_cache() {
-        global $apc;
-        $apc = array();
-    }
-}
-
-/*
     Now we "require()" the file to test.
 */
 
@@ -50,7 +16,7 @@ require(__DIR__ . "/../index.php");
 
 describe("php-keyval", function () use ($module) {
 
-    it("should call store.put(), store.get(), store.delete() with no cache", function () use ($module) {
+    it("should call store.put(), store.get(), store.delete()", function () use ($module) {
 
         $func = $module->exports;
 
@@ -59,27 +25,6 @@ describe("php-keyval", function () use ($module) {
         $val = "val";
 
         $store->put($key, $val);
-
-        assert($store->get($key) === $val);
-
-        $store->delete($key);
-
-        assert($store->get($key) === null);
-    });
-
-    it("should call store.put(), store.get(), store.delete() with a 10 second cache", function () use ($module) {
-
-        $func = $module->exports;
-
-        $store = $func(__DIR__ . "/fixtures/tmp/", 10);
-        $key = "key1";
-        $val = "val1";
-
-        $store->put($key, $val);
-
-        assert($store->get($key) === $val);
-
-        apc_clear_cache();
 
         assert($store->get($key) === $val);
 
@@ -136,6 +81,16 @@ describe("php-keyval", function () use ($module) {
         $keys = $store->getKeys(5, 3);
 
         assert(count($keys) === 3);
+    });
+
+    it("should return an [empty array]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/fake");
+
+        $keys = $store->getKeys(5, 3);
+
+        assert(count($keys) === 0);
     });
 
     it("should return [null] when trying to get() nothing", function () use ($module) {
