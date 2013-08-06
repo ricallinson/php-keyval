@@ -47,8 +47,9 @@ class KeyVal {
         return unlink($fullkey);
     }
 
-    public function getKeys($from=0, $length=null) {
+    public function getKeys($from = 0, $length = null, $filters = array()) {
 
+        $filtering = count($filters)> 0 ? true : false;
         $keys = array();
         $cur = 0;
         $dh  = @opendir($this->prefix); /* using @ to suppresses error message */
@@ -62,11 +63,24 @@ class KeyVal {
 
             if (is_file($this->prefix . $filename)) {
 
-                if ($cur >= $from) {
+                $match = true;
+
+                if ($filtering) {
+
+                    $item = $this->get($filename);
+
+                    foreach ($filters as $key => $value) {
+                        if (!isset($item[$key]) || $item[$key] !== $value) {
+                            $match = false;
+                        }
+                    }
+                }
+
+                if ($match && $cur >= $from) {
                     array_push($keys, $filename);
                 }
 
-                if ($length !== null && $cur === $from + $length - 1) { 
+                if ($match && $length !== null && $cur === $from + $length - 1) { 
                     return $keys;
                 }
 
