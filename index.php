@@ -70,7 +70,7 @@ class KeyVal {
                     $item = $this->get($filename);
 
                     foreach ($filters as $key => $value) {
-                        if (!isset($item[$key]) || $item[$key] !== $value) {
+                        if (!isset($item[$key]) || strtolower($item[$key]) !== strtolower($value)) {
                             $match = false;
                         }
                     }
