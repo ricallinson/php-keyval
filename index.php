@@ -76,15 +76,18 @@ class KeyVal {
                     }
                 }
 
-                if ($match && $cur >= $from) {
-                    array_push($keys, $filename);
-                }
+                if ($match) {
 
-                if ($match && $length !== null && $cur === $from + $length - 1) { 
-                    return $keys;
-                }
+                    if ($cur >= $from) {
+                        array_push($keys, $filename);
+                    }
 
-                $cur++;
+                    if ($length !== null && $cur === $from + $length - 1) { 
+                        return $keys;
+                    }
+
+                    $cur++;
+                }
             }
         }
 
