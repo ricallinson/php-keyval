@@ -93,6 +93,61 @@ describe("php-keyval", function () use ($module) {
         assert(count($keys) === 0);
     });
 
+    it("should return [3] from the filter [key2 === a]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/filtering");
+        $filter = array("key2" => "a");
+
+        $keys = $store->getKeys(0, null, $filter);
+
+        assert(count($keys) === 3);
+    });
+
+    it("should return [2] from the filter [key2 === b]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/filtering");
+        $filter = array("key2" => "b");
+
+        $keys = $store->getKeys(0, null, $filter);
+
+        assert(count($keys) === 2);
+    });
+
+    it("should return [2] from the filter [key2 === a, key3 === z]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/filtering");
+        $filter = array("key2" => "a", "key3" => "z");
+
+        $keys = $store->getKeys(0, null, $filter);
+
+        assert(count($keys) === 2);
+    });
+
+    it("should return [0] from the filter [key2 === b, key3 === z]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/filtering");
+        $filter = array("key2" => "b", "key3" => "z");
+
+        $keys = $store->getKeys(0, null, $filter);
+
+        assert(count($keys) === 0);
+    });
+
+    it("should return [2] from the filter [key2 === b, key3 === y]", function () use ($module) {
+
+        $func = $module->exports;
+        $store = $func(__DIR__ . "/fixtures/filtering");
+        $filter = array("key2" => "b", "key3" => "y");
+
+        $keys = $store->getKeys(0, null, $filter);
+
+        assert(count($keys) === 2);
+    });
+
     it("should return [null] when trying to get() nothing", function () use ($module) {
 
         $func = $module->exports;
